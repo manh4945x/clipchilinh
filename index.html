@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>112 Bạch Đằng - Xem Phim Online</title>
+  
+  <!-- Meta Tags for SEO -->
+  <meta name="description" content="Khám phá hàng ngàn bộ phim bom tấn đỉnh cao, phim hành động, viễn tưởng, chính kịch với trải nghiệm phát video chất lượng cao tại 112 Bạch Đằng.">
+  <meta name="keywords" content="xem phim online, xem phim HD, phim bom tan, 112 Bạch Đằng, xem trailer phim, custom video player">
+  <meta name="author" content="112 Bạch Đằng Team">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
+
+  <!-- Font Awesome Icons & Google Font Sheets -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Background Dim Overlay for Tắt Đèn -->
+  <div id="light-mask"></div>
+
+  <!-- Floating Sticky Header -->
+  <header id="main-header">
+    <a href="#" class="logo" id="header-logo" aria-label="112 Bạch Đằng Logo">
+      <i class="fas fa-play-circle"></i>
+      <span>112 Bạch Đằng</span>
+    </a>
+    
+    <nav aria-label="Main Navigation">
+      <ul class="nav-links">
+        <li class="active"><a href="#" data-view="home" id="nav-home"><i class="fas fa-home"></i> Trang Chủ</a></li>
+        <li><a href="#" data-view="watchlist" id="nav-watchlist"><i class="fas fa-bookmark"></i> Danh Sách Phát</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <form class="search-box" role="search" id="search-form">
+        <i class="fas fa-search" aria-hidden="true"></i>
+        <input type="search" placeholder="Tìm kiếm phim, thể loại, diễn viên..." id="header-search" aria-label="Search movies">
+      </form>
+      
+      <button class="profile-btn" id="user-profile-btn" aria-label="User profile">
+        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop" alt="User avatar">
+        <span>Vip Member</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Views Container -->
+  <main id="app-main">
+
+    <!-- 1. HOME VIEW (DEFAULT) -->
+    <div id="home-view" class="page-view active">
+      <!-- Immersive Cinematic Hero -->
+      <section class="hero-section" id="hero-banner" aria-label="Featured Movie">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <span class="hero-tagline"><i class="fas fa-fire"></i> Phim Nổi Bật Tuần Này</span>
+          <h1 class="hero-title" id="hero-movie-title">Cosmic Voyage</h1>
+          <div class="hero-meta">
+            <span class="hero-rating"><i class="fas fa-star"></i> <span class="hero-rating-val">8.6</span></span>
+            <span class="hero-year">2025</span>
+            <span>&bull;</span>
+            <span class="hero-duration">2h 05m</span>
+            <span>&bull;</span>
+            <span style="color: var(--primary); font-weight: 600;">Ultra HD</span>
+          </div>
+          <p class="hero-desc" id="hero-movie-desc">An crew of interstellar explorers embark on a perilous journey through a newly discovered wormhole, testing the limits of human endurance, love, and physics to save humanity.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary btn-play-hero" id="hero-play-action">
+              <i class="fas fa-play"></i> Xem Ngay
+            </button>
+            <button class="btn btn-secondary btn-watchlist-hero" id="hero-watchlist-action">
+              <i class="fas fa-plus"></i> Danh Sách Của Tôi
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Carousel: My Watchlist (Dynamically populated, hidden if empty) -->
+      <section class="category-section" id="watchlist-section" aria-label="My Watchlist Category">
+        <div class="section-header">
+          <h2 class="section-title">Danh Sách Của Bạn</h2>
+          <div class="carousel-controls">
+            <button class="carousel-btn left" aria-label="Scroll left" disabled><i class="fas fa-chevron-left"></i></button>
+            <button class="carousel-btn right" aria-label="Scroll right"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+        <div class="carousel-container" id="carousel-watchlist">
+          <!-- Movie cards rendered dynamically -->
+        </div>
+      </section>
+
+      <!-- Carousel: Trending Now -->
+      <section class="category-section" id="trending-section" aria-label="Trending Category">
+        <div class="section-header">
+          <h2 class="section-title">Xem Nhiều Nhất</h2>
+          <div class="carousel-controls">
+            <button class="carousel-btn left" aria-label="Scroll left" disabled><i class="fas fa-chevron-left"></i></button>
+            <button class="carousel-btn right" aria-label="Scroll right"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+        <div class="carousel-container" id="carousel-trending">
+          <!-- Movie cards rendered dynamically -->
+        </div>
+      </section>
+
+      <!-- Carousel: Action & Thriller -->
+      <section class="category-section" id="action-section" aria-label="Action Category">
+        <div class="section-header">
+          <h2 class="section-title">Hành Động & Kịch Tính</h2>
+          <div class="carousel-controls">
+            <button class="carousel-btn left" aria-label="Scroll left" disabled><i class="fas fa-chevron-left"></i></button>
+            <button class="carousel-btn right" aria-label="Scroll right"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+        <div class="carousel-container" id="carousel-action">
+          <!-- Movie cards rendered dynamically -->
+        </div>
+      </section>
+
+      <!-- Carousel: Sci-Fi & Cyberpunk -->
+      <section class="category-section" id="scifi-section" aria-label="Sci-Fi Category">
+        <div class="section-header">
+          <h2 class="section-title">Khoa Học Viễn Tưởng</h2>
+          <div class="carousel-controls">
+            <button class="carousel-btn left" aria-label="Scroll left" disabled><i class="fas fa-chevron-left"></i></button>
+            <button class="carousel-btn right" aria-label="Scroll right"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+        <div class="carousel-container" id="carousel-scifi">
+          <!-- Movie cards rendered dynamically -->
+        </div>
+      </section>
+
+      <!-- Drama & Romance section removed per request -->
+    </div>
+
+    <!-- 2. WATCHLIST VIEW -->
+    <div id="watchlist-view" class="page-view">
+      <div class="section-header">
+        <h2 class="section-title">Danh Sách Phát Của Tôi</h2>
+      </div>
+      <div class="grid-container" id="watchlist-grid">
+        <!-- Grid items rendered dynamically -->
+      </div>
+      <!-- Watchlist Empty State -->
+      <div class="empty-state" id="watchlist-empty-state">
+        <i class="fas fa-folder-open" aria-hidden="true"></i>
+        <h3>Danh sách đang trống</h3>
+        <p>Bạn chưa thêm bộ phim nào vào danh sách phát của mình. Hãy quay lại trang chủ và chọn phim bạn yêu thích.</p>
+        <button class="btn btn-primary" style="margin-top: 20px;" onclick="document.getElementById('nav-home').click()">Về Trang Chủ</button>
+      </div>
+    </div>
+
+    <!-- 3. SEARCH VIEW -->
+    <div id="search-view" class="page-view">
+      <div class="section-header">
+        <h2 class="section-title" id="search-query-title">Kết Quả Tìm Kiếm</h2>
+      </div>
+      <div class="grid-container" id="search-results-grid">
+        <!-- Grid items rendered dynamically -->
+      </div>
+      <!-- Search Empty State -->
+      <div class="empty-state" id="search-empty-state" style="display: none;">
+        <i class="fas fa-search-minus" aria-hidden="true"></i>
+        <h3>Không tìm thấy kết quả</h3>
+        <p>Chúng tôi không tìm thấy bộ phim nào phù hợp với từ khóa của bạn. Vui lòng kiểm tra lại chính tả hoặc thử một thể loại khác.</p>
+      </div>
+    </div>
+
+    <!-- 4. WATCH VIEW (PLAYMOVIE PAGE) -->
+    <div id="watch-view" class="page-view">
+      <!-- Breadcrumbs Trail -->
+      <div class="breadcrumbs">
+        <a href="#" class="breadcrumb-home" id="watch-breadcrumb-home">Trang chủ</a>
+        <i class="fas fa-chevron-right"></i>
+        <span class="breadcrumb-genre" id="watch-breadcrumb-genre">Thể loại</span>
+        <i class="fas fa-chevron-right"></i>
+        <span class="breadcrumb-title" id="watch-breadcrumb-title">Tên Phim</span>
+        <i class="fas fa-chevron-right"></i>
+        <span class="breadcrumb-active">Xem phim</span>
+      </div>
+
+      <div class="watch-grid">
+        <!-- Main Content Area: Player and Details -->
+        <div class="watch-main">
+          <!-- Video Player Box Container -->
+          <div class="video-container" id="player-container">
+            <video id="html5-video" preload="metadata"></video>
+            
+            <!-- Big Center Play/Pause Pulse Button -->
+            <div class="play-overlay-btn" id="player-pulse-action"><i class="fas fa-play"></i></div>
+
+            <!-- Controls Overlay -->
+            <div class="player-controls" id="custom-player-controls">
+              <!-- Seek Timeline Slider -->
+              <div class="timeline-container" id="timeline-scrub-box">
+                <div class="timeline">
+                  <div class="timeline-progress"></div>
+                  <div class="timeline-handle"></div>
+                </div>
+              </div>
+
+              <!-- Control Rows -->
+              <div class="controls-row">
+                <div class="controls-left">
+                  <button class="control-btn play-pause" aria-label="Play or Pause" id="player-play-btn">
+                    <i class="fas fa-play"></i>
+                  </button>
+                  
+                  <div class="volume-container">
+                    <button class="control-btn mute-toggle" aria-label="Mute or Unmute" id="player-mute-btn">
+                      <i class="fas fa-volume-up"></i>
+                    </button>
+                    <div class="volume-slider-wrapper" id="vol-slider-wrap">
+                      <input type="range" min="0" max="1" step="0.05" value="1" class="volume-slider" aria-label="Volume slider" id="player-volume-input">
+                    </div>
+                  </div>
+
+                  <div class="time-display" id="player-time-display">00:00 / 00:00</div>
+                </div>
+
+                <div class="controls-right">
+                  <div class="speed-container">
+                    <button class="control-btn speed-btn" aria-label="Playback speed settings" id="player-speed-settings-btn">
+                      <i class="fas fa-cog"></i>
+                    </button>
+                    <div class="speed-menu" id="player-speed-dropdown">
+                      <div class="speed-option" data-speed="0.5">0.5x</div>
+                      <div class="speed-option" data-speed="0.75">0.75x</div>
+                      <div class="speed-option selected" data-speed="1">Thường</div>
+                      <div class="speed-option" data-speed="1.25">1.25x</div>
+                      <div class="speed-option" data-speed="1.5">1.5x</div>
+                      <div class="speed-option" data-speed="2">2x</div>
+                    </div>
+                  </div>
+
+                  <button class="control-btn fullscreen-toggle" aria-label="Toggle Fullscreen" id="player-fullscreen-btn">
+                    <i class="fas fa-expand"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions Row -->
+          <div class="watch-actions-bar">
+            <button id="action-next" class="action-btn"><i class="fas fa-forward"></i> Tập tiếp</button>
+            <button id="action-comment" class="action-btn"><i class="fas fa-comments"></i> Bình luận</button>
+            <button id="action-lights" class="action-btn"><i class="fas fa-lightbulb"></i> Tắt đèn</button>
+            <button id="action-watchlist" class="action-btn"><i class="fas fa-bookmark"></i> Theo dõi</button>
+            <button id="action-expand" class="action-btn"><i class="fas fa-expand-alt"></i> Phóng to</button>
+            <button id="action-screenshot" class="action-btn"><i class="fas fa-camera"></i> Chụp ảnh</button>
+            <button id="action-download" class="action-btn"><i class="fas fa-download"></i> Tải về</button>
+          </div>
+
+          <!-- Server Selection -->
+          <div class="server-selection">
+            <span class="server-title">Chọn Server:</span>
+            <div class="server-buttons">
+              <button class="server-btn active" id="server-vip">VIP 1</button>
+              <button class="server-btn speed" id="server-hdx">HDX (ADS)</button>
+              <button class="server-btn backup" id="server-backup">BACKUP</button>
+            </div>
+          </div>
+
+          <!-- Movie Info Summary -->
+          <div class="watch-movie-details">
+            <h1 id="watch-movie-title-val">Cosmic Voyage</h1>
+            <div class="watch-movie-meta">
+              <span class="watch-movie-rating"><i class="fas fa-star"></i> <span id="watch-rating-val">8.6</span></span>
+              <span id="watch-movie-year-val">2025</span>
+              <span>&bull;</span>
+              <span id="watch-movie-duration-val">2h 05m</span>
+              <span>&bull;</span>
+              <span style="color: var(--primary); font-weight:600;">Full HD</span>
+            </div>
+            <p id="watch-movie-desc-val" class="watch-movie-desc">Tóm tắt nội dung phim.</p>
+          </div>
+
+          <!-- Comments Section -->
+          <div class="comments-section">
+            <h3 class="comments-title">Bình Luận</h3>
+            <form id="comment-form" class="comment-form">
+              <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop" alt="User avatar">
+              <div class="comment-input-wrapper">
+                <textarea placeholder="Chia sẻ suy nghĩ của bạn về bộ phim này..." id="comment-textarea" required rows="3"></textarea>
+                <button type="submit" class="btn btn-primary btn-submit-comment" id="comment-submit-action">Gửi bình luận</button>
+              </div>
+            </form>
+            
+            <div class="comments-list" id="comments-list">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar Section: Right Column Widgets -->
+        <div class="watch-sidebar">
+          <!-- Widget 1: Today Recommendation -->
+          <div class="sidebar-widget random-widget">
+            <h3 class="widget-title">Hôm nay xem gì?</h3>
+            <div class="widget-divider"></div>
+            <p class="widget-text">Nếu bạn buồn phiền không biết xem gì hôm nay. Hãy để chúng tôi chọn cho bạn.</p>
+            <button class="btn btn-primary btn-random-movie" id="btn-random-anime">
+              <i class="fas fa-random"></i> Xem Phim Ngẫu Nhiên
+            </button>
+          </div>
+
+          <!-- Widget 2: Custom Group Fanpage link -->
+          <div class="sidebar-widget banner-widget">
+            <a href="#" id="fanpage-widget-link">
+              <img src="https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=400&auto=format&fit=crop" alt="Anime fans community">
+              <div class="banner-text">
+                <strong>CỘNG ĐỒNG CINESTREAM</strong>
+                <span>Hỏi đáp, trao đổi phim hay!</span>
+              </div>
+            </a>
+          </div>
+
+          <!-- Widget 3: Newly Updated List -->
+          <div class="sidebar-widget updated-widget">
+            <h3 class="widget-title">Phim Mới Cập Nhật</h3>
+            <div class="widget-divider"></div>
+            <ul class="updated-list" id="sidebar-updated-list">
+              <!-- Rendered dynamically -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Detailed Movie Modal Overlay -->
+  <div class="modal-overlay" id="details-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-movie-title">
+    <div class="details-modal">
+      <button class="modal-close-btn" aria-label="Close details dialog" id="details-close-btn">
+        <i class="fas fa-times"></i>
+      </button>
+      
+      <div class="modal-header-hero">
+        <div class="modal-hero-bg"></div>
+        <div class="modal-hero-overlay"></div>
+        <div class="modal-hero-content">
+          <img src="" alt="" class="modal-poster">
+          <div class="modal-title-area">
+            <h2 id="modal-movie-title">Movie Title</h2>
+            <div class="modal-meta-row">
+              <span class="modal-rating"><i class="fas fa-star"></i> <span class="modal-rating-val">8.6</span></span>
+              <span class="modal-year">2025</span>
+              <span>&bull;</span>
+              <span class="modal-duration">2h 05m</span>
+            </div>
+            <div class="hero-actions" style="margin-top: 20px;">
+              <button class="btn btn-primary btn-play-modal" id="modal-play-action">
+                <i class="fas fa-play"></i> Phát Phim
+              </button>
+              <button class="btn btn-secondary btn-watchlist-modal" id="modal-watchlist-action">
+                <i class="fas fa-plus"></i> Thêm vào danh sách
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-grid">
+          <!-- Left Main Body Column -->
+          <div class="modal-main-info">
+            <div class="modal-synopsis">
+              <h4>Tóm Tắt Nội Dung</h4>
+              <p class="modal-synopsis-text">Movie description goes here.</p>
+            </div>
+            
+            <div class="similar-movies-section">
+              <h4>Đề Xuất Cho Bạn</h4>
+              <div class="similar-grid">
+                <!-- Recommendations render here -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Details Column -->
+          <div class="modal-side-info">
+            <div class="modal-info-panel">
+              <div class="info-item">
+                <div class="info-label">Đạo Diễn</div>
+                <div class="info-value info-director">Director Name</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Diễn Viên</div>
+                <div class="info-value info-cast">Actor 1, Actor 2, Actor 3</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Thể Loại</div>
+                <div class="genre-tags">
+                  <span class="genre-tag">Sci-Fi</span>
+                  <span class="genre-tag">Adventure</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer id="main-footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          <i class="fas fa-play-circle"></i>
+          <span>CineStream</span>
+        </a>
+        <p>CineStream là dịch vụ phát video trực tuyến cao cấp, mang thế giới điện ảnh chất lượng cao đến ngôi nhà của bạn.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Khám Phá</h4>
+        <ul>
+          <li><a href="#" onclick="document.getElementById('nav-home').click()">Trang Chủ</a></li>
+          <li><a href="#">Phim Hot</a></li>
+          <li><a href="#">TV Series</a></li>
+          <li><a href="#">Giải Thưởng</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Hỗ Trợ</h4>
+        <ul>
+          <li><a href="#">Trung Tâm Trợ Giúp</a></li>
+          <li><a href="#">Tài Khoản</a></li>
+          <li><a href="#">Liên Hệ</a></li>
+          <li><a href="#">Kiểm Tra Tốc Độ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Pháp Lý</h4>
+        <ul>
+          <li><a href="#">Điều Khoản Sử Dụng</a></li>
+          <li><a href="#">Quyền Riêng Tư</a></li>
+          <li><a href="#">Lựa Chọn Quảng Cáo</a></li>
+          <li><a href="#">Cookie Preferences</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <span>&copy; 2026 CineStream Inc. Thiết kế bởi Antigravity. Tất cả quyền được bảo lưu.</span>
+      <div class="footer-socials">
+        <a href="#" class="social-icon" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social-icon" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="social-icon" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="social-icon" aria-label="Youtube"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JS Scripts Import -->
+  <script src="js/data.js"></script>
+  <script src="js/watchlist.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

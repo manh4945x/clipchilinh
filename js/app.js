@@ -330,9 +330,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize mock comments if not present
     if (!state.commentsByMovie[movieId]) {
       state.commentsByMovie[movieId] = [
-        { author: "Đức Nguyễn", time: "2 giờ trước", text: "Trời ơi phim hay thực sự luôn, kỹ xảo điện ảnh đỉnh cao dã man!", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100&auto=format&fit=crop" },
-        { author: "Khánh Linh", time: "4 giờ trước", text: "Coi cuốn ghê á, mong chờ tập sau quá đi mất. Cảm ơn ad cập nhật phim nhanh nha.", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop" },
-        { author: "Quốc Anh", time: "1 ngày trước", text: "Diễn xuất của dàn diễn viên siêu đạt luôn, cốt truyện xây dựng chặt chẽ. Đáng xem 10/10.", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop" }
+        { author: "Hiếu", time: "2 giờ trước", text: "ớ ớ em sướng", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100&auto=format&fit=crop" },
+        { author: "Bùi Trung", time: "4 giờ trước", text: "kimochi", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop" },
+        { author: "Quốc Anh", time: "1 ngày trước", text: "10/10", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop" }
       ];
     }
 

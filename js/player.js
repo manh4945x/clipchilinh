@@ -2,6 +2,7 @@
 window.CustomPlayer = {
   container: null,
   video: null,
+  embedContainer: null,
   playPauseBtn: null,
   muteBtn: null,
   volumeSlider: null,
@@ -14,6 +15,7 @@ window.CustomPlayer = {
   speedMenu: null,
   speedOptions: null,
   playOverlayBtn: null,
+  currentMode: 'html5',
 
   isDragging: false,
   controlsTimeout: null,
@@ -37,6 +39,7 @@ window.CustomPlayer = {
     this.speedMenu = document.getElementById('player-speed-dropdown');
     this.speedOptions = this.speedMenu.querySelectorAll('.speed-option');
     this.playOverlayBtn = document.getElementById('player-pulse-action');
+    this.embedContainer = this.container.querySelector('#video-embed-wrapper');
 
     this.registerEvents();
   },
@@ -127,20 +130,19 @@ window.CustomPlayer = {
   },
 
   open(videoUrl) {
-    this.video.src = videoUrl;
-    this.video.play()
-      .then(() => {
-        this.resetControlsTimeout();
-      })
-      .catch((err) => {
-        console.warn("Autoplay was blocked or video source failed to load:", err);
-      });
+    if (this.isYouTubeUrl(videoUrl)) {
+      this.switchToEmbedMode(videoUrl);
+    } else {
+      this.switchToVideoMode(videoUrl);
+    }
   },
 
   close() {
     this.video.pause();
     this.video.removeAttribute('src');
     this.video.load();
+    this.embedContainer.innerHTML = '';
+    this.container.classList.remove('embed-mode');
     if (document.fullscreenElement || document.webkitFullscreenElement) {
       if (document.exitFullscreen) {
         document.exitFullscreen().catch(() => {});
@@ -151,7 +153,54 @@ window.CustomPlayer = {
     clearTimeout(this.controlsTimeout);
   },
 
+  isYouTubeUrl(url) {
+    return /(?:youtube\.com\/watch\?v=|youtu\.be\/)/i.test(url);
+  },
+
+  getYouTubeEmbedUrl(url) {
+    const match = url.match(/(?:v=|youtu\.be\/)([^&\s?#]+)/i);
+    if (!match) return null;
+    return `https://www.youtube.com/embed/${match[1]}?rel=0&autoplay=1&playsinline=1`;
+  },
+
+  switchToEmbedMode(originalUrl) {
+    const embedUrl = this.getYouTubeEmbedUrl(originalUrl);
+    if (!embedUrl) {
+      return this.switchToVideoMode(originalUrl);
+    }
+
+    this.currentMode = 'embed';
+    this.video.pause();
+    this.video.removeAttribute('src');
+    this.video.load();
+    this.container.classList.add('embed-mode');
+    this.embedContainer.innerHTML = `\
+      <iframe\
+        class="embed-video-frame"\
+        src="${embedUrl}"\
+        frameborder="0"\
+        allow="autoplay; encrypted-media; picture-in-picture"\
+        allowfullscreen>\
+      </iframe>\
+    `;
+  },
+
+  switchToVideoMode(videoUrl) {
+    this.currentMode = 'html5';
+    this.embedContainer.innerHTML = '';
+    this.container.classList.remove('embed-mode');
+    this.video.src = videoUrl;
+    this.video.play()
+      .then(() => {
+        this.resetControlsTimeout();
+      })
+      .catch((err) => {
+        console.warn("Autoplay was blocked or video source failed to load:", err);
+      });
+  },
+
   togglePlay() {
+    if (this.currentMode !== 'html5') return;
     if (this.video.paused) {
       this.video.play();
     } else {
@@ -178,7 +227,7 @@ window.CustomPlayer = {
   },
 
   updateProgress() {
-    if (this.isDragging) return;
+    if (this.currentMode !== 'html5' || this.isDragging) return;
     const percentage = (this.video.currentTime / this.video.duration) * 100;
     this.timelineProgress.style.width = `${percentage}%`;
     this.timelineHandle.style.left = `${percentage}%`;

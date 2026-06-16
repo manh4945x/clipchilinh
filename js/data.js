@@ -6,13 +6,13 @@ window.MOVIES_DATA = [
     genres: ["Sci-Fi", "Adventure"],
     backdrop: "js/img/z7941911767517_4358720af99d03db7da7c6958b443ad1.jpg",
     poster: "js/img/z7941915739018_02fafd5628f7868c8340e0808da2cd52.jpg",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    videoUrl: "https://www.youtube.com/watch?v=z-D9C2ZyRQ4",
     rating: 8.6,
     year: 2025,
     duration: "2h 05m",
     director: "Alaric Thorne",
-    cast: "Clara Oswald, John Smith, David Tennant",
-    description: "A crew of interstellar explorers embark on a perilous journey through a newly discovered wormhole, testing the limits of human endurance, love, and physics to save humanity.",
+    cast: "Cảnh Phan",
+    description: "Cảnh Phan và những người bạn",
     featured: true
   },
   {
@@ -27,7 +27,7 @@ window.MOVIES_DATA = [
     duration: "2h 12m",
     director: "Phạm Tiến Mạnh",
     cast: "Phạm Quốc Anh và rất nhiều diễn viên khác",
-    description: "In the rain-slicked, neon-drenched streets of Neo-Tokyo, a rogue cybernetic agent uncovers a sinister corporate conspiracy that threatens to rewrite human consciousness and identity."
+    description: "P2 của yakuza Việt Nam, tiếp tục câu chuyện về những cuộc chiến đẫm máu giữa các băng đảng giang hồ tại Việt Nam, với sự xuất hiện của những công nghệ tiên tiến và những âm mưu đen tối."
   },
   {
     id: "shadow-of-woods",
@@ -40,7 +40,7 @@ window.MOVIES_DATA = [
     year: 2024,
     duration: "1h 45m",
     director: "Elena Rostova",
-    cast: "Sophia Lily, David Vance, Mia Thorne",
+    cast: "Bùi Trung, Ngọc Khiêm, Quốc Anh, Đặng Cảnh, Đức Dương",
     description: "A group of ambitious documentarians search for a mythical beast in an ancient, untouched European forest, only to discover that the trees themselves hold an ancient and terrifying curse."
   },
   {
@@ -53,8 +53,8 @@ window.MOVIES_DATA = [
     rating: 8.4,
     year: 2025,
     duration: "1h 48m",
-    director: "Nicolas Winding Refn",
+    director: "Vũ Đức Dương",
     cast: "Ryan Gosling, Carey Mulligan, Bryan Cranston",
-    description: "Bộ phim kể về hành trình của Thầy Vũ Đức Dương, một giáo viên dạy lái xe tại một trường học ở thành phố Chí Linh. Một ngày nọ,"
+    description: "Bộ phim kể về hành trình của Thầy Vũ Đức Dương, một giáo viêndạy lái xe tại một trường học ở thành phố Chí Linh. Một ngày nọ,"
   }
 ];

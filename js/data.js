@@ -35,10 +35,10 @@ window.MOVIES_DATA = [
     genres: ["Horror", "Thriller"],
     backdrop: "js/img/IMG_20250503_171504.jpg",
     poster: "js/img/IMG_20250503_171504.jpg",
-    videoUrl: "js/mp4/112.mp4",
+    videoUrl: "js/mp4/1123.mp4",
     rating: 7.4,
     year: 2024,
-    duration: "1h 45m",
+    duration: "15s",
     director: "Elena Rostova",
     cast: "Bùi Trung, Ngọc Khiêm, Quốc Anh, Đặng Cảnh, Đức Dương",
     description: "A group of ambitious documentarians search for a mythical beast in an ancient, untouched European forest, only to discover that the trees themselves hold an ancient and terrifying curse."

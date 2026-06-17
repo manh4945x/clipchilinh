@@ -49,7 +49,7 @@ window.MOVIES_DATA = [
     genres: ["Action", "Thriller"],
     backdrop: "js/img/tahyvuducduong.webp",
     poster: "js/img/nen.jpg",
-    videoUrl: "js/mp4/7940566915558.mp4",
+    videoUrl: "https://drive.google.com/file/d/14zZOZXAZAO91y7NW2_49f44Wbld7K0L3/view?usp=sharing",
     rating: 8.4,
     year: 2025,
     duration: "1h 48m",

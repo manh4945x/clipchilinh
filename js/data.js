@@ -35,7 +35,7 @@ window.MOVIES_DATA = [
     genres: ["Horror", "Thriller"],
     backdrop: "js/img/IMG_20250503_171504.jpg",
     poster: "js/img/IMG_20250503_171504.jpg",
-    videoUrl: "js/mp4/ae112.mp4",
+    videoUrl: "js/mp4/112.mp4",
     rating: 7.4,
     year: 2024,
     duration: "1h 45m",
@@ -49,12 +49,12 @@ window.MOVIES_DATA = [
     genres: ["Action", "Thriller"],
     backdrop: "js/img/tahyvuducduong.webp",
     poster: "js/img/nen.jpg",
-    videoUrl: "https://drive.google.com/file/d/14zZOZXAZAO91y7NW2_49f44Wbld7K0L3/view?usp=sharing",
+    videoUrl: "js/mp4/Video Project.mp4",
     rating: 8.4,
     year: 2025,
     duration: "1h 48m",
     director: "Vũ Đức Dương",
-    cast: "Ryan Gosling, Carey Mulligan, Bryan Cranston",
+    cast: "Thầy Vũ Đức Dương và anh Khiêm cộng sự của thầy",
     description: "Bộ phim kể về hành trình của Thầy Vũ Đức Dương, một giáo viêndạy lái xe tại một trường học ở thành phố Chí Linh. Một ngày nọ,"
   }
 ];

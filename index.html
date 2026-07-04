@@ -445,6 +445,11 @@
             <input type="email" id="register-email" placeholder="Email" required>
             <input type="password" id="register-password" placeholder="Mật khẩu" required>
             <input type="password" id="register-confirm" placeholder="Nhập lại mật khẩu" required>
+            <div class="avatar-picker">
+              <label class="avatar-picker-label">Chọn ảnh đại diện</label>
+              <div class="avatar-options" id="register-avatar-options"></div>
+              <input type="url" id="register-avatar-url" placeholder="Hoặc dán link ảnh đại diện">
+            </div>
             <button type="submit" class="btn btn-primary">Tạo tài khoản</button>
           </form>
 
@@ -453,6 +458,15 @@
           <div id="account-panel" class="account-panel" style="display:none;">
             <h3 id="account-name">Tên người dùng</h3>
             <p id="account-role">Thành viên</p>
+            <div class="account-avatar-section">
+              <div class="account-avatar-preview" id="account-avatar-preview"></div>
+              <div class="avatar-picker avatar-picker-inline">
+                <label class="avatar-picker-label">Đổi ảnh đại diện</label>
+                <div class="avatar-options" id="account-avatar-options"></div>
+                <input type="url" id="account-avatar-url" placeholder="Dán link ảnh khác">
+                <button type="button" class="btn btn-secondary" id="save-avatar-btn">Lưu ảnh</button>
+              </div>
+            </div>
             <div class="account-actions">
               <button class="btn btn-primary" id="open-admin-btn">Mở bảng quản trị</button>
               <button class="btn btn-secondary" id="logout-btn">Đăng xuất</button>

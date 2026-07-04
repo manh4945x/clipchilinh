@@ -751,6 +751,75 @@ main {
   background: rgba(255,255,255,0.03);
 }
 
+.avatar-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.avatar-picker-inline {
+  margin-top: 0;
+}
+
+.avatar-picker-label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.avatar-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.avatar-option {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  overflow: hidden;
+  background: transparent;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.avatar-option:hover,
+.avatar-option.active {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.avatar-option img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.account-avatar-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.account-avatar-preview {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--primary);
+  flex-shrink: 0;
+}
+
+.account-avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .admin-list {
   display: grid;
   gap: 10px;

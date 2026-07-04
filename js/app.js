@@ -4,6 +4,15 @@ document.addEventListener('DOMContentLoaded', () => {
   window.CustomPlayer.init();
 
   const COMMENTS_STORAGE_KEY = 'movie_streaming_comments';
+  const DEFAULT_AVATAR_URL = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop';
+  const AVATAR_PRESETS = [
+    { value: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop', label: 'Classic' },
+    { value: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop', label: 'Smiling' },
+    { value: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100&auto=format&fit=crop', label: 'Casual' },
+    { value: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=100&auto=format&fit=crop', label: 'Cool' },
+    { value: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=100&auto=format&fit=crop', label: 'Soft' },
+    { value: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=100&auto=format&fit=crop', label: 'Bright' }
+  ];
 
   function saveComments(comments) {
     localStorage.setItem(COMMENTS_STORAGE_KEY, JSON.stringify(comments));
@@ -138,6 +147,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const profileLabel = document.getElementById('profile-btn-label');
     const openAdminBtn = document.getElementById('open-admin-btn');
     const logoutBtn = document.getElementById('logout-btn');
+    const saveAvatarBtn = document.getElementById('save-avatar-btn');
+    const accountAvatarPreview = document.getElementById('account-avatar-preview');
+    const accountAvatarInput = document.getElementById('account-avatar-url');
+    const registerAvatarInput = document.getElementById('register-avatar-url');
 
     const storageKey = 'movie_streaming_auth';
     const adminStorageKey = 'movie_streaming_admin';
@@ -157,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function ensureDefaultAdmin() {
       const users = getUsers();
       if (!users.some(user => user.username === 'admin')) {
-        users.push({ id: 'admin-default', username: 'admin', email: 'admin@webseg.com', password: 'admin123', role: 'admin' });
+        users.push({ id: 'admin-default', username: 'admin', email: 'admin@webseg.com', password: 'admin123', role: 'admin', avatar: DEFAULT_AVATAR_URL });
         saveUsers(users);
       }
     }
@@ -171,7 +184,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setCurrentUser(user) {
-      localStorage.setItem('movie_streaming_current_user', JSON.stringify(user));
+      const normalizedUser = { ...user, avatar: user?.avatar || DEFAULT_AVATAR_URL };
+      const users = getUsers();
+      const index = users.findIndex(existing => existing.id === normalizedUser.id || existing.username === normalizedUser.username);
+      if (index >= 0) {
+        users[index] = { ...users[index], ...normalizedUser };
+        saveUsers(users);
+      }
+      localStorage.setItem('movie_streaming_current_user', JSON.stringify(normalizedUser));
       updateAuthUI();
     }
 
@@ -180,11 +200,64 @@ document.addEventListener('DOMContentLoaded', () => {
       updateAuthUI();
     }
 
+    function getUserAvatar(user) {
+      return user?.avatar || DEFAULT_AVATAR_URL;
+    }
+
+    function renderAvatarOptions(containerId, selectedAvatar) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = AVATAR_PRESETS.map(option => `
+        <button type="button" class="avatar-option ${selectedAvatar === option.value ? 'active' : ''}" data-avatar="${option.value}" aria-label="${option.label}">
+          <img src="${option.value}" alt="${option.label}">
+        </button>
+      `).join('');
+
+      container.querySelectorAll('.avatar-option').forEach(button => {
+        button.addEventListener('click', () => {
+          const avatarValue = button.dataset.avatar;
+          if (containerId === 'account-avatar-options') {
+            if (accountAvatarInput) accountAvatarInput.value = avatarValue;
+            if (accountAvatarPreview) {
+              accountAvatarPreview.innerHTML = `<img src="${avatarValue}" alt="avatar">`;
+            }
+          } else if (registerAvatarInput) {
+            registerAvatarInput.value = avatarValue;
+          }
+          renderAvatarOptions(containerId, avatarValue);
+        });
+      });
+    }
+
+    function updateAccountAvatarPreview(avatarUrl) {
+      if (accountAvatarPreview) {
+        accountAvatarPreview.innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
+      }
+    }
+
+    function saveAvatarForCurrentUser(avatarUrl) {
+      const currentUser = getCurrentUser();
+      if (!currentUser) return;
+      const nextUser = { ...currentUser, avatar: avatarUrl || DEFAULT_AVATAR_URL };
+      const users = getUsers();
+      const index = users.findIndex(existing => existing.id === currentUser.id || existing.username === currentUser.username);
+      if (index >= 0) {
+        users[index] = { ...users[index], avatar: nextUser.avatar };
+        saveUsers(users);
+      }
+      localStorage.setItem('movie_streaming_current_user', JSON.stringify(nextUser));
+      updateAuthUI();
+    }
+
     function updateAuthUI() {
       const currentUser = getCurrentUser();
       const isAdmin = currentUser?.role === 'admin';
       profileLabel.textContent = currentUser ? currentUser.username : 'Đăng nhập';
-      profileBtn.querySelector('img').src = currentUser ? 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop' : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop';
+      const profileImg = profileBtn.querySelector('img');
+      if (profileImg) {
+        profileImg.src = currentUser ? getUserAvatar(currentUser) : DEFAULT_AVATAR_URL;
+        profileImg.alt = currentUser ? currentUser.username : 'User avatar';
+      }
       accountPanel.style.display = currentUser ? 'block' : 'none';
       adminBtn.style.display = isAdmin ? 'inline-flex' : 'none';
       document.getElementById('comment-submit-action').disabled = !currentUser;
@@ -200,6 +273,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if (accountName) accountName.textContent = currentUser ? currentUser.username : 'Khách';
       if (accountRole) accountRole.textContent = isAdmin ? 'Quản trị viên' : 'Thành viên';
       if (openAdminBtn) openAdminBtn.style.display = isAdmin ? 'inline-flex' : 'none';
+      if (currentUser) {
+        renderAvatarOptions('register-avatar-options', registerAvatarInput?.value || DEFAULT_AVATAR_URL);
+        renderAvatarOptions('account-avatar-options', getUserAvatar(currentUser));
+        updateAccountAvatarPreview(getUserAvatar(currentUser));
+        if (accountAvatarInput) accountAvatarInput.value = getUserAvatar(currentUser);
+      } else {
+        renderAvatarOptions('register-avatar-options', registerAvatarInput?.value || DEFAULT_AVATAR_URL);
+        if (accountAvatarInput) accountAvatarInput.value = '';
+        if (accountAvatarPreview) accountAvatarPreview.innerHTML = '';
+      }
 
       const authTabsContainer = document.querySelector('.auth-tabs');
       if (authTabsContainer) {
@@ -246,6 +329,11 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+    saveAvatarBtn?.addEventListener('click', () => {
+      const avatarUrl = accountAvatarInput?.value.trim() || DEFAULT_AVATAR_URL;
+      saveAvatarForCurrentUser(avatarUrl);
+    });
+
     loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const username = document.getElementById('login-username').value.trim();
@@ -269,6 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const email = document.getElementById('register-email').value.trim();
       const password = document.getElementById('register-password').value;
       const confirm = document.getElementById('register-confirm').value;
+      const avatar = (registerAvatarInput?.value || '').trim() || DEFAULT_AVATAR_URL;
       const users = getUsers();
       if (!username || !email || !password || password !== confirm) {
         authStatus.textContent = 'Vui lòng kiểm tra thông tin đăng ký.';
@@ -278,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
         authStatus.textContent = 'Tên đăng nhập đã tồn tại.';
         return;
       }
-      const newUser = { id: Date.now().toString(), username, email, password, role: 'member' };
+      const newUser = { id: Date.now().toString(), username, email, password, role: 'member', avatar };
       users.push(newUser);
       saveUsers(users);
       setCurrentUser(newUser);
@@ -731,7 +820,7 @@ document.addEventListener('DOMContentLoaded', () => {
       author: currentUser.username,
       time: "Vừa xong",
       text: text,
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop"
+      avatar: currentUser.avatar || DEFAULT_AVATAR_URL
     };
 
     state.commentsByMovie[state.activeMovie.id].unshift(newComment);

@@ -103,6 +103,10 @@ button {
   outline: none;
 }
 
+input, textarea {
+  font-family: var(--font-secondary);
+}
+
 /* Floating Navigation Header */
 header {
   position: fixed;
@@ -649,6 +653,133 @@ main {
   font-size: 1.4rem;
   color: var(--text-main);
   margin-bottom: 10px;
+}
+
+/* Auth & Admin Modal Styles */
+.auth-modal-overlay, .admin-modal-overlay {
+  z-index: 250;
+}
+
+.auth-modal, .admin-modal {
+  max-width: 760px;
+}
+
+.auth-modal-content, .admin-modal-content {
+  padding: 32px;
+}
+
+.auth-hero, .admin-header {
+  margin-bottom: 24px;
+}
+
+.auth-hero h2, .admin-header h2 {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.auth-hero p, .admin-header p {
+  color: var(--text-muted);
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.auth-tab {
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  color: var(--text-muted);
+}
+
+.auth-tab.active {
+  background: var(--primary);
+  color: white;
+}
+
+.auth-form, .admin-form {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-form.active {
+  display: flex;
+}
+
+.auth-form input,
+.admin-form input,
+.admin-form textarea {
+  width: 100%;
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.04);
+  color: var(--text-main);
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-grid textarea {
+  grid-column: 1 / -1;
+}
+
+.admin-actions, .account-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.auth-status {
+  margin-top: 14px;
+  color: var(--accent);
+  min-height: 20px;
+}
+
+.account-panel {
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+}
+
+.admin-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.admin-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+}
+
+.admin-item-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.comment-auth-note {
+  color: var(--accent);
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+
+.comment-form textarea:disabled {
+  opacity: 0.6;
 }
 
 /* Movie Details Modal Overlay */

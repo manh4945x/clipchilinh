@@ -44,7 +44,11 @@
       
       <button class="profile-btn" id="user-profile-btn" aria-label="User profile">
         <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop" alt="User avatar">
-        <span>Vip Member</span>
+        <span id="profile-btn-label">Đăng nhập</span>
+      </button>
+      <button class="profile-btn admin-btn" id="admin-panel-btn" aria-label="Admin panel" style="display:none;">
+        <i class="fas fa-shield-alt"></i>
+        <span>Quản trị</span>
       </button>
     </div>
   </header>
@@ -287,11 +291,12 @@
           <!-- Comments Section -->
           <div class="comments-section">
             <h3 class="comments-title">Bình Luận</h3>
+            <div class="comment-auth-note" id="comment-auth-note">Đăng nhập để bình luận</div>
             <form id="comment-form" class="comment-form">
               <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop" alt="User avatar">
               <div class="comment-input-wrapper">
-                <textarea placeholder="Chia sẻ suy nghĩ của bạn về bộ phim này..." id="comment-textarea" required rows="3"></textarea>
-                <button type="submit" class="btn btn-primary btn-submit-comment" id="comment-submit-action">Gửi bình luận</button>
+                <textarea placeholder="Đăng nhập để chia sẻ suy nghĩ..." id="comment-textarea" required rows="3" disabled></textarea>
+                <button type="submit" class="btn btn-primary btn-submit-comment" id="comment-submit-action" disabled>Gửi bình luận</button>
               </div>
             </form>
             
@@ -408,6 +413,89 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Authentication Modal -->
+  <div class="modal-overlay auth-modal-overlay" id="auth-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <div class="details-modal auth-modal">
+      <button class="modal-close-btn" aria-label="Close auth dialog" id="auth-close-btn">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="auth-modal-content">
+        <div class="auth-hero">
+          <h2 id="auth-title">Đăng nhập & tạo tài khoản</h2>
+          <p>Đăng ký để bình luận, lưu ý kiến và dùng các tính năng cá nhân.</p>
+        </div>
+        <div class="auth-body">
+          <div class="auth-tabs">
+            <button class="auth-tab active" data-auth-mode="login">Đăng nhập</button>
+            <button class="auth-tab" data-auth-mode="register">Đăng ký</button>
+          </div>
+
+          <form id="login-form" class="auth-form active">
+            <input type="text" id="login-username" placeholder="Tên đăng nhập" required>
+            <input type="password" id="login-password" placeholder="Mật khẩu" required>
+            <button type="submit" class="btn btn-primary">Đăng nhập</button>
+          </form>
+
+          <form id="register-form" class="auth-form">
+            <input type="text" id="register-username" placeholder="Tên đăng nhập" required>
+            <input type="email" id="register-email" placeholder="Email" required>
+            <input type="password" id="register-password" placeholder="Mật khẩu" required>
+            <input type="password" id="register-confirm" placeholder="Nhập lại mật khẩu" required>
+            <button type="submit" class="btn btn-primary">Tạo tài khoản</button>
+          </form>
+
+          <div id="auth-status" class="auth-status"></div>
+
+          <div id="account-panel" class="account-panel" style="display:none;">
+            <h3 id="account-name">Tên người dùng</h3>
+            <p id="account-role">Thành viên</p>
+            <div class="account-actions">
+              <button class="btn btn-primary" id="open-admin-btn">Mở bảng quản trị</button>
+              <button class="btn btn-secondary" id="logout-btn">Đăng xuất</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay admin-modal-overlay" id="admin-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="admin-title">
+    <div class="details-modal admin-modal">
+      <button class="modal-close-btn" aria-label="Close admin dialog" id="admin-close-btn">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="admin-modal-content">
+        <div class="admin-header">
+          <h2 id="admin-title">Bảng quản trị</h2>
+          <p>Quản lý phim, nội dung và danh sách trình chiếu.</p>
+        </div>
+
+        <form id="movie-form" class="admin-form">
+          <input type="hidden" id="movie-id-field" value="">
+          <div class="admin-grid">
+            <input type="text" id="movie-title" placeholder="Tên phim" required>
+            <input type="text" id="movie-genres" placeholder="Thể loại (vd: Action, Sci-Fi)">
+            <textarea id="movie-description" rows="3" placeholder="Tóm tắt phim"></textarea>
+            <input type="text" id="movie-director" placeholder="Đạo diễn">
+            <input type="text" id="movie-cast" placeholder="Diễn viên">
+            <input type="number" id="movie-year" placeholder="Năm" min="1900" max="2100">
+            <input type="text" id="movie-duration" placeholder="Thời lượng">
+            <input type="number" id="movie-rating" step="0.1" min="0" max="10" placeholder="Điểm đánh giá">
+            <input type="text" id="movie-poster" placeholder="Đường dẫn poster">
+            <input type="text" id="movie-backdrop" placeholder="Đường dẫn backdrop">
+            <input type="text" id="movie-video" placeholder="Đường dẫn video">
+          </div>
+          <div class="admin-actions">
+            <button type="submit" class="btn btn-primary">Lưu phim</button>
+            <button type="reset" class="btn btn-secondary" id="cancel-edit-btn">Huỷ chỉnh sửa</button>
+          </div>
+        </form>
+
+        <div class="admin-list" id="admin-movie-list"></div>
       </div>
     </div>
   </div>

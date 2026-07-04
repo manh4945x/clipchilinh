@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const navItems = document.querySelectorAll('.nav-links li');
   const searchInput = document.querySelector('#header-search');
   const lightMask = document.getElementById('light-mask');
+  const authModalOverlay = document.getElementById('auth-modal-overlay');
+  const adminModalOverlay = document.getElementById('admin-modal-overlay');
   
   const views = {
     home: document.getElementById('home-view'),
@@ -35,6 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSearch();
     setupWatchlistPage();
     setupWatchViewEvents();
+    setupAuthUI();
+    setupAdminUI();
+    renderAdminMovies();
 
     // Listen for watchlist changes to live-update the UI
     window.WatchlistManager.onChange((updatedWatchlist) => {
@@ -105,6 +110,320 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function setupAuthUI() {
+    const profileBtn = document.getElementById('user-profile-btn');
+    const adminBtn = document.getElementById('admin-panel-btn');
+    const authCloseBtn = document.getElementById('auth-close-btn');
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const authTabs = document.querySelectorAll('.auth-tab');
+    const authStatus = document.getElementById('auth-status');
+    const accountPanel = document.getElementById('account-panel');
+    const profileLabel = document.getElementById('profile-btn-label');
+    const openAdminBtn = document.getElementById('open-admin-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    const storageKey = 'movie_streaming_auth';
+    const adminStorageKey = 'movie_streaming_admin';
+
+    function saveUsers(users) {
+      localStorage.setItem(storageKey, JSON.stringify(users));
+    }
+
+    function getUsers() {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function ensureDefaultAdmin() {
+      const users = getUsers();
+      if (!users.some(user => user.username === 'admin')) {
+        users.push({ id: 'admin-default', username: 'admin', email: 'admin@webseg.com', password: 'admin123', role: 'admin' });
+        saveUsers(users);
+      }
+    }
+
+    function getCurrentUser() {
+      try {
+        return JSON.parse(localStorage.getItem('movie_streaming_current_user'));
+      } catch {
+        return null;
+      }
+    }
+
+    function setCurrentUser(user) {
+      localStorage.setItem('movie_streaming_current_user', JSON.stringify(user));
+      updateAuthUI();
+    }
+
+    function clearCurrentUser() {
+      localStorage.removeItem('movie_streaming_current_user');
+      updateAuthUI();
+    }
+
+    function updateAuthUI() {
+      const currentUser = getCurrentUser();
+      const isAdmin = currentUser?.role === 'admin';
+      profileLabel.textContent = currentUser ? currentUser.username : 'Đăng nhập';
+      profileBtn.querySelector('img').src = currentUser ? 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop' : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop';
+      accountPanel.style.display = currentUser ? 'block' : 'none';
+      adminBtn.style.display = isAdmin ? 'inline-flex' : 'none';
+      document.getElementById('comment-submit-action').disabled = !currentUser;
+      document.getElementById('comment-textarea').disabled = !currentUser;
+      document.getElementById('comment-textarea').placeholder = currentUser ? 'Chia sẻ suy nghĩ của bạn...' : 'Đăng nhập để chia sẻ suy nghĩ...';
+      document.getElementById('comment-auth-note').textContent = currentUser ? `Đăng nhập với ${currentUser.username}` : 'Đăng nhập để bình luận';
+      const commentBtn = document.getElementById('comment-submit-action');
+      if (commentBtn) {
+        commentBtn.textContent = currentUser ? 'Gửi bình luận' : 'Gửi bình luận';
+      }
+      const accountName = document.getElementById('account-name');
+      const accountRole = document.getElementById('account-role');
+      if (accountName) accountName.textContent = currentUser ? currentUser.username : 'Khách';
+      if (accountRole) accountRole.textContent = isAdmin ? 'Quản trị viên' : 'Thành viên';
+
+      const authTabsContainer = document.querySelector('.auth-tabs');
+      if (authTabsContainer) {
+        authTabsContainer.style.display = currentUser ? 'none' : 'flex';
+      }
+      if (currentUser) {
+        loginForm.classList.remove('active');
+        registerForm.classList.remove('active');
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'none';
+        authStatus.style.display = 'none';
+      } else {
+        loginForm.classList.add('active');
+        registerForm.classList.remove('active');
+        loginForm.style.display = '';
+        registerForm.style.display = '';
+        authStatus.style.display = '';
+      }
+    }
+
+    profileBtn.addEventListener('click', () => {
+      authModalOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      updateAuthUI();
+    });
+
+    authCloseBtn.addEventListener('click', closeAuthModal);
+    authModalOverlay.addEventListener('click', (e) => {
+      if (e.target === authModalOverlay) closeAuthModal();
+    });
+
+    function closeAuthModal() {
+      authModalOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    authTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        authTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const mode = tab.dataset.authMode;
+        document.getElementById('login-form').classList.toggle('active', mode === 'login');
+        document.getElementById('register-form').classList.toggle('active', mode === 'register');
+      });
+    });
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+      const users = getUsers();
+      const found = users.find(user => user.username === username && user.password === password);
+      if (!found) {
+        authStatus.textContent = 'Tên đăng nhập hoặc mật khẩu không đúng.';
+        return;
+      }
+      setCurrentUser(found);
+      loginForm.reset();
+      authStatus.textContent = 'Đăng nhập thành công!';
+      closeAuthModal();
+      renderComments(state.activeMovie?.id);
+    });
+
+    registerForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('register-username').value.trim();
+      const email = document.getElementById('register-email').value.trim();
+      const password = document.getElementById('register-password').value;
+      const confirm = document.getElementById('register-confirm').value;
+      const users = getUsers();
+      if (!username || !email || !password || password !== confirm) {
+        authStatus.textContent = 'Vui lòng kiểm tra thông tin đăng ký.';
+        return;
+      }
+      if (users.some(user => user.username === username)) {
+        authStatus.textContent = 'Tên đăng nhập đã tồn tại.';
+        return;
+      }
+      const newUser = { id: Date.now().toString(), username, email, password, role: 'member' };
+      users.push(newUser);
+      saveUsers(users);
+      setCurrentUser(newUser);
+      registerForm.reset();
+      authStatus.textContent = 'Tạo tài khoản thành công!';
+      closeAuthModal();
+      renderComments(state.activeMovie?.id);
+    });
+
+    openAdminBtn.addEventListener('click', () => {
+      adminModalOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      clearCurrentUser();
+      authStatus.textContent = 'Đã đăng xuất.';
+      renderComments(state.activeMovie?.id);
+    });
+
+    adminBtn.addEventListener('click', () => {
+      adminModalOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+
+    const adminCloseBtn = document.getElementById('admin-close-btn');
+    adminCloseBtn.addEventListener('click', closeAdminModal);
+    adminModalOverlay.addEventListener('click', (e) => {
+      if (e.target === adminModalOverlay) closeAdminModal();
+    });
+
+    function closeAdminModal() {
+      adminModalOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    ensureDefaultAdmin();
+    updateAuthUI();
+  }
+
+  function setupAdminUI() {
+    const movieForm = document.getElementById('movie-form');
+    const movieList = document.getElementById('admin-movie-list');
+    const movieIdField = document.getElementById('movie-id-field');
+    const cancelEditBtn = document.getElementById('cancel-edit-btn');
+
+    function saveMovies(list) {
+      localStorage.setItem('movie_streaming_admin_movies', JSON.stringify(list));
+    }
+
+    function getMovies() {
+      try {
+        return JSON.parse(localStorage.getItem('movie_streaming_admin_movies')) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function syncMoviesToApp() {
+      const stored = getMovies();
+      if (stored.length) {
+        state.movies = stored;
+        renderCarousels();
+        if (state.activeMovie) {
+          const refreshed = stored.find(movie => movie.id === state.activeMovie.id);
+          if (refreshed) {
+            state.activeMovie = refreshed;
+          }
+        }
+      }
+    }
+
+    movieForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const movie = {
+        id: movieIdField.value || `movie-${Date.now()}`,
+        title: document.getElementById('movie-title').value.trim(),
+        genres: document.getElementById('movie-genres').value.split(',').map(item => item.trim()).filter(Boolean),
+        description: document.getElementById('movie-description').value.trim(),
+        director: document.getElementById('movie-director').value.trim(),
+        cast: document.getElementById('movie-cast').value.trim(),
+        year: Number(document.getElementById('movie-year').value) || 2026,
+        duration: document.getElementById('movie-duration').value.trim(),
+        rating: Number(document.getElementById('movie-rating').value) || 8.0,
+        poster: document.getElementById('movie-poster').value.trim(),
+        backdrop: document.getElementById('movie-backdrop').value.trim(),
+        videoUrl: document.getElementById('movie-video').value.trim(),
+        featured: false
+      };
+      const list = getMovies();
+      const index = list.findIndex(item => item.id === movie.id);
+      if (index >= 0) {
+        list[index] = movie;
+      } else {
+        list.unshift(movie);
+      }
+      saveMovies(list);
+      movieForm.reset();
+      movieIdField.value = '';
+      syncMoviesToApp();
+      renderAdminMovies();
+      alert('Đã lưu phim thành công!');
+    });
+
+    window.deleteMovieById = function(id) {
+      const list = getMovies().filter(movie => movie.id !== id);
+      saveMovies(list);
+      syncMoviesToApp();
+      renderAdminMovies();
+    };
+
+    window.editMovieById = function(id) {
+      const list = getMovies();
+      const movie = list.find(item => item.id === id);
+      if (!movie) return;
+      document.getElementById('movie-id-field').value = movie.id;
+      document.getElementById('movie-title').value = movie.title;
+      document.getElementById('movie-genres').value = (movie.genres || []).join(', ');
+      document.getElementById('movie-description').value = movie.description || '';
+      document.getElementById('movie-director').value = movie.director || '';
+      document.getElementById('movie-cast').value = movie.cast || '';
+      document.getElementById('movie-year').value = movie.year || '';
+      document.getElementById('movie-duration').value = movie.duration || '';
+      document.getElementById('movie-rating').value = movie.rating || '';
+      document.getElementById('movie-poster').value = movie.poster || '';
+      document.getElementById('movie-backdrop').value = movie.backdrop || '';
+      document.getElementById('movie-video').value = movie.videoUrl || '';
+      document.getElementById('movie-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    cancelEditBtn.addEventListener('click', () => {
+      movieForm.reset();
+      movieIdField.value = '';
+    });
+
+    function renderAdminMovies() {
+      const list = getMovies();
+      movieList.innerHTML = '';
+      if (!list.length) {
+        movieList.innerHTML = '<div class="empty-state">Chưa có phim nào trong quản trị.</div>';
+        return;
+      }
+      list.forEach(movie => {
+        const item = document.createElement('div');
+        item.className = 'admin-item';
+        item.innerHTML = `
+          <div>
+            <strong>${movie.title}</strong>
+            <div class="info-value">${(movie.genres || []).join(', ') || 'Chưa có thể loại'}</div>
+          </div>
+          <div class="admin-item-actions">
+            <button class="btn btn-secondary" onclick="editMovieById('${movie.id}')">Sửa</button>
+            <button class="btn btn-primary" onclick="deleteMovieById('${movie.id}')">Xoá</button>
+          </div>
+        `;
+        movieList.appendChild(item);
+      });
+    }
+
+    renderAdminMovies();
   }
 
   // Setup header menu clicks
@@ -327,23 +646,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const list = document.getElementById('comments-list');
     list.innerHTML = '';
 
-    // Initialize mock comments if not present
+    // Initialize empty comment list if not present
     if (!state.commentsByMovie[movieId]) {
-      state.commentsByMovie[movieId] = [
-        { author: "Hiếu", time: "2 giờ trước", text: "ớ ớ em sướng", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100&auto=format&fit=crop" },
-        { author: "Bùi Trung", time: "4 giờ trước", text: "kimochi", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop" },
-        { author: "Quốc Anh", time: "1 ngày trước", text: "10/10", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop" }
-      ];
+      state.commentsByMovie[movieId] = [];
     }
 
     const comments = state.commentsByMovie[movieId];
+    const currentUser = JSON.parse(localStorage.getItem('movie_streaming_current_user') || 'null');
+    const isAdmin = currentUser?.role === 'admin';
 
     if (comments.length === 0) {
       list.innerHTML = '<div style="color: var(--text-dim); text-align: center; padding: 20px 0;">Hãy là người đầu tiên bình luận cho bộ phim này!</div>';
       return;
     }
 
-    comments.forEach(comment => {
+    comments.forEach((comment, index) => {
       const item = document.createElement('div');
       item.className = 'comment-item';
       item.innerHTML = `
@@ -352,26 +669,44 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="comment-header">
             <span class="comment-author">${comment.author}</span>
             <span class="comment-time">${comment.time}</span>
+            ${isAdmin ? `<button type="button" class="comment-delete-btn" data-index="${index}">Xóa</button>` : ''}
           </div>
           <p class="comment-text">${comment.text}</p>
         </div>
       `;
       list.appendChild(item);
     });
+
+    if (isAdmin) {
+      list.querySelectorAll('.comment-delete-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const index = Number(e.currentTarget.dataset.index);
+          deleteComment(movieId, index);
+        });
+      });
+    }
   }
+
+  window.deleteComment = function(movieId, commentIndex) {
+    if (!state.commentsByMovie[movieId]) return;
+    if (commentIndex < 0 || commentIndex >= state.commentsByMovie[movieId].length) return;
+    state.commentsByMovie[movieId].splice(commentIndex, 1);
+    renderComments(movieId);
+  };
 
   // Push comment to array and render
   function submitComment() {
     if (!state.activeMovie) return;
     const textarea = document.getElementById('comment-textarea');
     const text = textarea.value.trim();
-    if (text === '') return;
+    const currentUser = JSON.parse(localStorage.getItem('movie_streaming_current_user') || 'null');
+    if (text === '' || !currentUser) return;
 
     const newComment = {
-      author: "Vip Member (Bạn)",
+      author: currentUser.username,
       time: "Vừa xong",
       text: text,
-      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop"
+      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop"
     };
 
     state.commentsByMovie[state.activeMovie.id].unshift(newComment);

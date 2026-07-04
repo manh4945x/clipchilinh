@@ -4,12 +4,14 @@ document.addEventListener('DOMContentLoaded', () => {
   window.CustomPlayer.init();
 
   // App State
+  const COMMENTS_STORAGE_KEY = 'movie_streaming_comments';
+
   const state = {
     currentView: 'home', // 'home', 'watchlist', 'search', 'watch'
     activeMovie: null,
     movies: window.MOVIES_DATA || [],
     watchlist: window.WatchlistManager.get(),
-    commentsByMovie: {} // Store comments dynamically per movie ID
+    commentsByMovie: loadComments() // Store comments per movie ID
   };
 
   // DOM Elements
@@ -185,6 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const accountRole = document.getElementById('account-role');
       if (accountName) accountName.textContent = currentUser ? currentUser.username : 'Khách';
       if (accountRole) accountRole.textContent = isAdmin ? 'Quản trị viên' : 'Thành viên';
+      if (openAdminBtn) openAdminBtn.style.display = isAdmin ? 'inline-flex' : 'none';
 
       const authTabsContainer = document.querySelector('.auth-tabs');
       if (authTabsContainer) {
@@ -202,6 +205,18 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.style.display = '';
         registerForm.style.display = '';
         authStatus.style.display = '';
+      }
+    }
+
+    function saveComments(comments) {
+      localStorage.setItem(COMMENTS_STORAGE_KEY, JSON.stringify(comments));
+    }
+
+    function loadComments() {
+      try {
+        return JSON.parse(localStorage.getItem(COMMENTS_STORAGE_KEY)) || {};
+      } catch {
+        return {};
       }
     }
 
@@ -274,6 +289,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     openAdminBtn.addEventListener('click', () => {
+      const currentUser = getCurrentUser();
+      if (currentUser?.role !== 'admin') {
+        authStatus.textContent = 'Chỉ admin mới có quyền mở bảng quản trị.';
+        return;
+      }
       adminModalOverlay.classList.add('active');
       document.body.style.overflow = 'hidden';
     });
@@ -285,6 +305,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     adminBtn.addEventListener('click', () => {
+      const currentUser = getCurrentUser();
+      if (currentUser?.role !== 'admin') {
+        return;
+      }
       adminModalOverlay.classList.add('active');
       document.body.style.overflow = 'hidden';
     });
@@ -691,6 +715,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!state.commentsByMovie[movieId]) return;
     if (commentIndex < 0 || commentIndex >= state.commentsByMovie[movieId].length) return;
     state.commentsByMovie[movieId].splice(commentIndex, 1);
+    saveComments(state.commentsByMovie);
     renderComments(movieId);
   };
 
@@ -710,6 +735,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     state.commentsByMovie[state.activeMovie.id].unshift(newComment);
+    saveComments(state.commentsByMovie);
     renderComments(state.activeMovie.id);
     textarea.value = '';
   }

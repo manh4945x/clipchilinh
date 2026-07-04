@@ -3,9 +3,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize Custom Video Player
   window.CustomPlayer.init();
 
-  // App State
   const COMMENTS_STORAGE_KEY = 'movie_streaming_comments';
 
+  function saveComments(comments) {
+    localStorage.setItem(COMMENTS_STORAGE_KEY, JSON.stringify(comments));
+  }
+
+  function loadComments() {
+    try {
+      return JSON.parse(localStorage.getItem(COMMENTS_STORAGE_KEY)) || {};
+    } catch {
+      return {};
+    }
+  }
+
+  // App State
   const state = {
     currentView: 'home', // 'home', 'watchlist', 'search', 'watch'
     activeMovie: null,
@@ -205,18 +217,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.style.display = '';
         registerForm.style.display = '';
         authStatus.style.display = '';
-      }
-    }
-
-    function saveComments(comments) {
-      localStorage.setItem(COMMENTS_STORAGE_KEY, JSON.stringify(comments));
-    }
-
-    function loadComments() {
-      try {
-        return JSON.parse(localStorage.getItem(COMMENTS_STORAGE_KEY)) || {};
-      } catch {
-        return {};
       }
     }
 
